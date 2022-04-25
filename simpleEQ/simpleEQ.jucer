@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="Imongg" name="simpleEQ" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+  <MAINGROUP id="KlCZTw" name="simpleEQ">
+    <GROUP id="{B5E04313-7D16-EA2A-FCEF-B40139CAE04F}" name="Source">
+      <FILE id="XKMqrF" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="RBJIBb" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="GUk8Qy" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="izVV84" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
+  <EXPORTFORMATS>
+    <VS2019 targetFolder="Builds/VisualStudio2019">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="simpleEQ"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="simpleEQ"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_audio_basics" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../vstprogram/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+</JUCERPROJECT>
