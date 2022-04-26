@@ -95,6 +95,19 @@ void SimpleEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+
+    juce::dsp::ProcessSpec spec;
+
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = sampleRate;
+
+    spec.numChannels = 1;
+
+    leftChain.prepare(spec);
+    rightChain.prepare(spec);
+
+
+
 }
 
 void SimpleEQAudioProcessor::releaseResources()
@@ -144,18 +157,29 @@ void SimpleEQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
+
+    juce::dsp::AudioBlock<float> block(buffer);
+    auto leftBlock = block.getSingleChannelBlock(0); //left channal
+    auto rightBlock = block.getSingleChannelBlock(1); // right channal
+
+    juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock); // leftchannal context wrapper
+    juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock); // rightchannal context wrapper
+
+    leftChain.process(leftContext); // leftcontext processor
+    rightChain.process(rightContext);//right processor
+
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+    //for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    //{
+    //    auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
-    }
+    //    // ..do something to the data...
+    //}
 }
 
 //==============================================================================
@@ -189,28 +213,28 @@ void SimpleEQAudioProcessor::setStateInformation (const void* data, int sizeInBy
 juce::AudioProcessorValueTreeState::ParameterLayout SimpleEQAudioProcessor::createParameterLayout() 
 {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
-    layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq", "LowCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20.f)); //低截止 20-20000 步长1 斜率1 默认值20
+    layout.add(std::make_unique<juce::AudioParameterFloat>("LowCut Freq", "LowCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20.f)); //lowcut paramter 
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("HighCut Freq", "HighCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20000.f));//高截止 20-20000 步长1 斜率1 默认值20000
+    layout.add(std::make_unique<juce::AudioParameterFloat>("HighCut Freq", "HighCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20000.f));//highcut
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Freq", "Peak Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 750.f));//峰截止 20-20000 步长1 斜率1 默认值750
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Freq", "Peak Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 750.f));//peak freq
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Gain", "Peak Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f)); //峰增益。分贝表示。-24 - +24 步长0.5 斜率1 默认值0
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Gain", "Peak Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f)); //gain
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Quality", "Peak Quality", juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f)); //峰增益范围 0.1 - 10 步长0.5 斜率1 默认1
+    layout.add(std::make_unique<juce::AudioParameterFloat>("Peak Quality", "Peak Quality", juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f)); // quality
 
 
 
-    juce::StringArray stringArray; // 储存高通低通斜率选择值。必须是这种因为公式规定是6的倍数
+    juce::StringArray stringArray; // selection array
     for (int i = 0; i < 4; i++) {
         juce::String str;
-        str << (12 + i * 12) << " db / Oct"; //这地方应该是操作符重载了
+        str << (12 + i * 12) << " db / Oct"; // << operator overload
         stringArray.add(str);
     }
 
 
-    layout.add(std::make_unique<juce::AudioParameterChoice>("LowCut Slope", "LowCut Slope", stringArray, 0)); //低通斜率
-    layout.add(std::make_unique<juce::AudioParameterChoice>("HighCut Slope", "HighCut Slope", stringArray, 0)); //高通斜率
+    layout.add(std::make_unique<juce::AudioParameterChoice>("LowCut Slope", "LowCut Slope", stringArray, 0)); //lowcut slope
+    layout.add(std::make_unique<juce::AudioParameterChoice>("HighCut Slope", "HighCut Slope", stringArray, 0)); //highcup slope
 
 
 
