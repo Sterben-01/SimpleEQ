@@ -103,7 +103,7 @@ void SimpleEQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
 
     spec.numChannels = 1;
 
-    leftChain.prepare(spec);
+    leftChain.prepare(spec); 
     rightChain.prepare(spec);
 
 
@@ -234,7 +234,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout SimpleEQAudioProcessor::crea
 
 
     layout.add(std::make_unique<juce::AudioParameterChoice>("LowCut Slope", "LowCut Slope", stringArray, 0)); //lowcut slope
-    layout.add(std::make_unique<juce::AudioParameterChoice>("HighCut Slope", "HighCut Slope", stringArray, 0)); //highcup slope
+    layout.add(std::make_unique<juce::AudioParameterChoice>("HighCut Slope", "HighCut Slope", stringArray, 0)); //highcut slope
 
 
 
