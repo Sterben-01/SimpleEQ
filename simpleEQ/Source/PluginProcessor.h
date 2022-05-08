@@ -113,7 +113,65 @@ private:
     using Coefficients = Filter::CoefficientsPtr;
     static void updateCoefficients(Coefficients& old, const Coefficients& replacements);
 
+    template<typename ChainType, typename CoefficientType>
+    void updateCutFilter(ChainType& LowCut, const CoefficientType& cutCoefficients, const Slope& lowCutSlope) 
+    {
+        //auto cutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(chainSettings.lowCutFreq,
+        //    getSampleRate(),
+        //    2 * (chainSettings.lowCutSlope + 1));
 
+        //auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
+
+        LowCut.setBypassed<0>(true);
+        LowCut.setBypassed<1>(true);
+        LowCut.setBypassed<2>(true);
+        LowCut.setBypassed<3>(true);
+
+
+        //switch (chainSettings.lowCutSlope)
+        switch(lowCutSlope)
+        {
+        case Slope_12:
+        {
+            *LowCut.get<0>().coefficients = *cutCoefficients[0];
+            LowCut.setBypassed<0>(false);
+            break;
+        }
+        case Slope_24:
+        {
+            *LowCut.get<0>().coefficients = *cutCoefficients[0];
+            LowCut.setBypassed<0>(false);
+            *LowCut.get<1>().coefficients = *cutCoefficients[1];
+            LowCut.setBypassed<1>(false);
+            break;
+
+        }
+        case Slope_36:
+        {
+            *LowCut.get<0>().coefficients = *cutCoefficients[0];
+            LowCut.setBypassed<0>(false);
+            *LowCut.get<1>().coefficients = *cutCoefficients[1];
+            LowCut.setBypassed<1>(false);
+            *LowCut.get<2>().coefficients = *cutCoefficients[2];
+            LowCut.setBypassed<2>(false);
+            break;
+        }
+
+        case Slope_48:
+        {
+            *LowCut.get<0>().coefficients = *cutCoefficients[0];
+            LowCut.setBypassed<0>(false);
+            *LowCut.get<1>().coefficients = *cutCoefficients[1];
+            LowCut.setBypassed<1>(false);
+            *LowCut.get<2>().coefficients = *cutCoefficients[2];
+            LowCut.setBypassed<2>(false);
+            *LowCut.get<3>().coefficients = *cutCoefficients[3];
+            LowCut.setBypassed<3>(false);
+            break;
+        }
+        }
+
+    }
 
 
 
