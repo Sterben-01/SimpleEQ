@@ -11,7 +11,14 @@
 
 //==============================================================================
 SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p), 
+    peakFreqSliderAttachment(audioProcessor.apvts, "Peak Freq", peakFreqSlider),
+    peakGainSliderAttachment(audioProcessor.apvts, "Peak Gain", peakGainSlider),
+    peakQualitySliderAttachment(audioProcessor.apvts, "Peak Quality", peakQualitySlider),
+    lowCutFreqSliderAttachment(audioProcessor.apvts, "LowCut Freq", lowCutFreqSlider),
+    lowCutSlopeSliderAttachment(audioProcessor.apvts, "LowCut Slope", lowCutSlopeSlider),
+    highCutFreqSliderAttachment(audioProcessor.apvts, "HighCut Freq", highCutFreqSlider),
+    highCutSlopeSliderAttachment(audioProcessor.apvts, "HighCut Slope", highCutSlopeSlider)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -19,6 +26,7 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
     {
         addAndMakeVisible(*comp);
     }
+
     setSize (800, 600);
 }
 
@@ -26,7 +34,7 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
 std::vector<juce::Component*> SimpleEQAudioProcessorEditor::getComps()
 {
 
-    return{ &peakFreqSlider, &peakGainSlider, &peakQualitySlider, &lowCutFreqSlider, &highCutFreqSlider, &lowCutSlopeSlider, &HighCutSlopeSlider };
+    return{ &peakFreqSlider, &peakGainSlider, &peakQualitySlider, &lowCutFreqSlider, &highCutFreqSlider, &lowCutSlopeSlider, &highCutSlopeSlider };
 
     //return std::vector<juce::Component*>{ &peakFreqSlider, &peakGainSlider, &peakQualitySlider, &lowCutFreqSlider, &highCutFreqSlider };
 
@@ -59,7 +67,7 @@ void SimpleEQAudioProcessorEditor::resized()
     lowCutSlopeSlider.setBounds(LowCutArea);
 
     highCutFreqSlider.setBounds(HighCutArea.removeFromTop(HighCutArea.getHeight() * 0.5));
-    HighCutSlopeSlider.setBounds(HighCutArea);
+    highCutSlopeSlider.setBounds(HighCutArea);
 
     peakFreqSlider.setBounds(bounds.removeFromTop(bounds.getHeight() * 0.33));
     peakGainSlider.setBounds(bounds.removeFromTop(bounds.getHeight() * 0.5));
