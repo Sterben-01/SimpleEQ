@@ -113,8 +113,22 @@ private:
     using Coefficients = Filter::CoefficientsPtr;
     static void updateCoefficients(Coefficients& old, const Coefficients& replacements);
 
+
+    //template<typename ChainType, typename CoefficientType>
+    //void update(int index, ChainType& chain, const CoefficientType& coefficients) {
+    //    updateCoefficients(chain.get<index>().coefficients, coefficients[index]);
+    //    chain.setBypassed<index>(false);
+    //}
+    template<int index, typename ChainType, typename CoefficientType>
+    void update(ChainType& chain, const CoefficientType& coefficients) {
+        updateCoefficients(chain.get<index>().coefficients, coefficients[index]);
+        chain.setBypassed<index>(false);
+    }
+
+
+
     template<typename ChainType, typename CoefficientType>
-    void updateCutFilter(ChainType& LowCut, const CoefficientType& cutCoefficients, const Slope& lowCutSlope) 
+    void updateCutFilter(ChainType& chain, const CoefficientType& cutCoefficients, const Slope& slope) 
     {
         //auto cutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(chainSettings.lowCutFreq,
         //    getSampleRate(),
@@ -122,14 +136,32 @@ private:
 
         //auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
 
-        LowCut.setBypassed<0>(true);
-        LowCut.setBypassed<1>(true);
-        LowCut.setBypassed<2>(true);
-        LowCut.setBypassed<3>(true);
+        chain.setBypassed<0>(true);
+        chain.setBypassed<1>(true);
+        chain.setBypassed<2>(true);
+        chain.setBypassed<3>(true);
 
+        switch (slope) {
+        case Slope_48: {
+            update<3>(chain, cutCoefficients);
+            //update(3,LowCut, cutCoefficients);
 
-        //switch (chainSettings.lowCutSlope)
-        switch(lowCutSlope)
+        }
+        case Slope_36: {
+            update<2>(chain, cutCoefficients);
+            //update(2, LowCut, cutCoefficients);
+        }
+        case Slope_24: {
+            update<1>(chain, cutCoefficients);
+            //update(1, LowCut, cutCoefficients);
+        }
+        case Slope_12: {
+            update<0>(chain, cutCoefficients);
+            //update(0, LowCut, cutCoefficients);
+        }
+        }
+        //switch (chainSet{tings.lowCutSlope)
+        /*switch(lowCutSlope)
         {
         case Slope_12:
         {
@@ -169,7 +201,7 @@ private:
             LowCut.setBypassed<3>(false);
             break;
         }
-        }
+        }*/
 
     }
 
