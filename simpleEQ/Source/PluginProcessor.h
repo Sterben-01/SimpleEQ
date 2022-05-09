@@ -80,13 +80,6 @@ public:
     juce::AudioProcessorValueTreeState apvts{*this, nullptr, "Parameters", createParameterLayout() }; //核心
 
 
-
-
-
-
-
-
-
 private:
 
     using Filter = juce::dsp::IIR::Filter<float>;
@@ -160,50 +153,16 @@ private:
             //update(0, LowCut, cutCoefficients);
         }
         }
-        //switch (chainSet{tings.lowCutSlope)
-        /*switch(lowCutSlope)
-        {
-        case Slope_12:
-        {
-            *LowCut.get<0>().coefficients = *cutCoefficients[0];
-            LowCut.setBypassed<0>(false);
-            break;
-        }
-        case Slope_24:
-        {
-            *LowCut.get<0>().coefficients = *cutCoefficients[0];
-            LowCut.setBypassed<0>(false);
-            *LowCut.get<1>().coefficients = *cutCoefficients[1];
-            LowCut.setBypassed<1>(false);
-            break;
-
-        }
-        case Slope_36:
-        {
-            *LowCut.get<0>().coefficients = *cutCoefficients[0];
-            LowCut.setBypassed<0>(false);
-            *LowCut.get<1>().coefficients = *cutCoefficients[1];
-            LowCut.setBypassed<1>(false);
-            *LowCut.get<2>().coefficients = *cutCoefficients[2];
-            LowCut.setBypassed<2>(false);
-            break;
-        }
-
-        case Slope_48:
-        {
-            *LowCut.get<0>().coefficients = *cutCoefficients[0];
-            LowCut.setBypassed<0>(false);
-            *LowCut.get<1>().coefficients = *cutCoefficients[1];
-            LowCut.setBypassed<1>(false);
-            *LowCut.get<2>().coefficients = *cutCoefficients[2];
-            LowCut.setBypassed<2>(false);
-            *LowCut.get<3>().coefficients = *cutCoefficients[3];
-            LowCut.setBypassed<3>(false);
-            break;
-        }
-        }*/
-
+ 
     }
+
+    void updateLowCutFilters(const ChainSettings& chainSettings);
+    void updateHighCutFilters(const ChainSettings& chainSettings);
+    void updateFilters();
+
+
+
+
 
 
 
