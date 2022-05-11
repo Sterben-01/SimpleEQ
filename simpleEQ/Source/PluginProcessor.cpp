@@ -274,7 +274,7 @@ void SimpleEQAudioProcessor::updatePeakFilter(const ChainSettings& chainSettings
 }
 
 
-void /*SimpleEQAudioProcessor::*/updateCoefficients(Coefficients& old, const Coefficients& replacements)
+void updateCoefficients(Coefficients& old, const Coefficients& replacements)
 {
     *old = *replacements;
 }
