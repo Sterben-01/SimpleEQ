@@ -21,10 +21,62 @@ struct CustomRotarySlider : juce::Slider
 
 
 
+
+
+
+struct ResopnceCurveComponent : juce::Component, juce::AudioProcessorParameter::Listener, juce::Timer
+{
+    ResopnceCurveComponent(SimpleEQAudioProcessor&);
+    ~ResopnceCurveComponent();
+
+
+
+    void parameterValueChanged(int parameterIndex, float newValue) override; // listener class 
+    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}; // listener class
+
+    void timerCallback() override; //timer class callback decide whether param changed -> need to be repainted
+    void paint(juce::Graphics& g) override;
+
+private:
+    SimpleEQAudioProcessor& audioProcessor;
+    juce::Atomic<bool> parametersChanged{ false };
+    MonoChain monoChain;
+
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //==============================================================================
 /**
 */
-class SimpleEQAudioProcessorEditor : public juce::AudioProcessorEditor, juce::AudioProcessorParameter::Listener, juce::Timer
+class SimpleEQAudioProcessorEditor : public juce::AudioProcessorEditor
 {
 public:
     SimpleEQAudioProcessorEditor(SimpleEQAudioProcessor&);
@@ -34,10 +86,7 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
-    void parameterValueChanged(int parameterIndex, float newValue) override; // listener class 
-    void parameterGestureChanged(int parameterIndex, bool gestureIsStarting) override {}; // listener class
 
-    void timerCallback() override; //timer class callback decide whether param changed -> need to be repainted
 
 
 private:
@@ -45,7 +94,7 @@ private:
     // access the processor object that created it.
     SimpleEQAudioProcessor& audioProcessor;
 
-    juce::Atomic<bool> parametersChanged{ false };
+ 
 
     CustomRotarySlider peakFreqSlider, peakGainSlider, peakQualitySlider, lowCutFreqSlider, highCutFreqSlider, lowCutSlopeSlider, highCutSlopeSlider;
 
@@ -55,13 +104,13 @@ private:
     APVTS_Attachment peakFreqSliderAttachment, peakGainSliderAttachment, peakQualitySliderAttachment, lowCutFreqSliderAttachment, highCutFreqSliderAttachment, lowCutSlopeSliderAttachment, highCutSlopeSliderAttachment;
 
 
-
+    ResopnceCurveComponent responseCurveComponent;
 
 
 
     std::vector<juce::Component*> getComps();
 
-    MonoChain monoChain;
+ 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEQAudioProcessorEditor)
 };
