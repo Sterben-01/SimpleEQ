@@ -31,23 +31,60 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     g.setColour(Colour::fromFloatRGBA(1.f, 0.53f, 1.f, 0.7f)); //circle edge color
     g.drawEllipse(bounds, 3.f);
 
-    auto center = bounds.getCentre();
-    Path p;
-    Rectangle<float> r;
-    r.setLeft(center.getX() - 2);
-    r.setRight(center.getX() + 2);
-    r.setTop(bounds.getY());
-    r.setBottom(center.getY());
+    if (auto* rswl = dynamic_cast<RotarySliderWithLables*>(&slider)) 
+    {
+        auto center = bounds.getCentre();
+        Path p;
+        Rectangle<float> r;
+        r.setLeft(center.getX() - 2);
+        r.setRight(center.getX() + 2);
+        r.setTop(bounds.getY());
+        r.setBottom(center.getY() - rswl->getTextHeight()*1.5);
 
-    p.addRectangle(r);
+        p.addRoundedRectangle(r, 2.f);
+        jassert(rotaryStartAnegle < rotaryEndAngle);
 
-    jassert(rotaryStartAnegle < rotaryEndAngle);
+        auto sliderAngRad = jmap(sliderPosProportional, 0.f, 1.f, rotaryStartAnegle, rotaryEndAngle);
 
-    auto sliderAngRad = jmap(sliderPosProportional, 0.f, 1.f, rotaryStartAnegle, rotaryEndAngle);
+        p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
 
-    p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
+        g.fillPath(p);
 
-    g.fillPath(p);
+        g.setFont(rswl->getTextHeight());
+        auto text = rswl->getDisplayString();
+        auto strWidth = g.getCurrentFont().getStringWidth(text);
+
+        r.setSize(strWidth + 6, rswl->getTextBoxHeight() + 4);
+
+        r.setCentre(bounds.getCentre());
+
+        g.setColour(Colours::black);
+        //g.drawRect(r);
+        g.setFont(20.0f);
+
+        g.drawFittedText(text, r.toNearestInt(), juce::Justification::centred, 1);
+
+    }
+
+
+
+    //auto center = bounds.getCentre();
+    //Path p;
+    //Rectangle<float> r;
+    //r.setLeft(center.getX() - 2);
+    //r.setRight(center.getX() + 2);
+    //r.setTop(bounds.getY());
+    //r.setBottom(center.getY());
+
+    //p.addRectangle(r);
+
+    //jassert(rotaryStartAnegle < rotaryEndAngle);
+
+    //auto sliderAngRad = jmap(sliderPosProportional, 0.f, 1.f, rotaryStartAnegle, rotaryEndAngle);
+
+    //p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
+
+    //g.fillPath(p);
 
 }
 
@@ -104,7 +141,10 @@ juce::Rectangle<int>RotarySliderWithLables::getSliderBounds() const
 }
 
 
-
+juce::String RotarySliderWithLables::getDisplayString() const
+{
+    return juce::String(getValue());
+}
 
 ResopnceCurveComponent::ResopnceCurveComponent(SimpleEQAudioProcessor& p) : audioProcessor(p)
 {
@@ -325,7 +365,14 @@ void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
     //g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centredTop, 1);
     //imageComponent.setBoundsRelative(0.0f, 0.0f, 1.0f, 1.0f);
     auto imagea = juce::ImageCache::getFromMemory(BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpg, BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpgSize);
-    g.drawImage(imagea, getLocalBounds().toFloat());
+    if (imagea.isNull())
+    {
+        jassert(!imagea.isNull());
+    }
+    else 
+    {
+        g.drawImage(imagea, getLocalBounds().toFloat());
+    }
 }
 
 void SimpleEQAudioProcessorEditor::resized()
