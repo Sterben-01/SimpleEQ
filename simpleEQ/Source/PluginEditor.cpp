@@ -24,11 +24,11 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     using namespace juce;
 
     auto bounds = Rectangle<float>(x, y, width, height);
+    //auto ccc = Colour(97u, 18u, 167u);
+    g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f)); //circle color
+    g.fillEllipse(bounds);
 
-    //g.setColour(Colour(97u, 18u, 167u)); //circle color
-    //g.fillEllipse(bounds);
-
-    g.setColour(Colour(255u, 154u, 1u)); //circle edge color
+    g.setColour(Colour::fromFloatRGBA(1.f, 0.53f, 1.f, 0.7f)); //circle edge color
     g.drawEllipse(bounds, 3.f);
 
     auto center = bounds.getCentre();
@@ -127,25 +127,6 @@ ResopnceCurveComponent::~ResopnceCurveComponent()
         param->removeListener(this);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
