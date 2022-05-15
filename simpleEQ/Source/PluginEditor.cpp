@@ -54,7 +54,7 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         auto text = rswl->getDisplayString();
         auto strWidth = g.getCurrentFont().getStringWidth(text);
 
-        r.setSize(strWidth + 6, rswl->getTextBoxHeight() + 4);
+        r.setSize(strWidth + 4, rswl->getTextBoxHeight() + 2);
 
         r.setCentre(bounds.getCentre());
 
@@ -103,10 +103,10 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
     auto sliderBounds = getSliderBounds();
 
-    g.setColour(Colours::red); //test bound region
-    g.drawRect(getLocalBounds());//test bound region
-    g.setColour(Colours::green);//test bound region
-    g.drawRect(sliderBounds);//test bound region
+    //g.setColour(Colours::red); //test bound region
+    //g.drawRect(getLocalBounds());//test bound region
+    //g.setColour(Colours::green);//test bound region
+    //g.drawRect(sliderBounds);//test bound region
 
     
 
@@ -143,7 +143,44 @@ juce::Rectangle<int>RotarySliderWithLables::getSliderBounds() const
 
 juce::String RotarySliderWithLables::getDisplayString() const
 {
-    return juce::String(getValue());
+    if (auto* choiceParam = dynamic_cast<juce::AudioParameterChoice*>(param))
+    {
+        return choiceParam->getCurrentChoiceName();
+    }
+    juce::String str;
+
+    bool addK = false;
+    if (auto* floatParam = dynamic_cast<juce::AudioParameterFloat*>(param))
+    {
+        float val = getValue();
+        if (val > 999.f)
+        {
+            val /= 1000.f;
+            addK = true;
+        }
+
+        str = juce::String(val, (addK ? 2 : 0));
+
+
+    }   
+    else
+    {
+        jassertfalse;
+    }
+
+    if (suffix.isNotEmpty())
+    {
+        str << " ";
+        if (addK)
+        {
+            str << "k";
+        }
+        str << suffix;
+    }
+    return str;
+
+
+
 }
 
 ResopnceCurveComponent::ResopnceCurveComponent(SimpleEQAudioProcessor& p) : audioProcessor(p)
