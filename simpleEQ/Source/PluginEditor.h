@@ -23,9 +23,12 @@ struct LookAndFeel : juce::LookAndFeel_V4
 
 
 
-
-
-
+//struct BackgroundImage : juce::Component
+//{
+//    BackgroundImage();
+//    void paint(juce::Graphics& g) override;
+//    juce::Image backgroundImage;
+//};
 
 
 struct RotarySliderWithLables : juce::Slider
@@ -101,15 +104,6 @@ private:
 
 
 
-
-
-
-
-
-
-
-
-
 //==============================================================================
 /**
 */
@@ -132,6 +126,7 @@ private:
     SimpleEQAudioProcessor& audioProcessor;
 
  
+    //BackgroundImage backgroundImage;
 
     RotarySliderWithLables peakFreqSlider, peakGainSlider, peakQualitySlider, lowCutFreqSlider, highCutFreqSlider, lowCutSlopeSlider, highCutSlopeSlider;
 
@@ -147,7 +142,7 @@ private:
 
     std::vector<juce::Component*> getComps();
 
- 
+    //juce::ImageComponent imageComponent;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEQAudioProcessorEditor)
 };

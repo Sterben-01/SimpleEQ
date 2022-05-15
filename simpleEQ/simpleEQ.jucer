@@ -12,6 +12,11 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="izVV84" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
+    <GROUP id="{38D67D07-E533-6990-1E5E-F1B373D0B0BD}" name="resources">
+      <FILE id="l618ci" name="74FEACB9673C6E78044BFF6B863A94BB-min.jpg" compile="0"
+            resource="1" file="resources/74FEACB9673C6E78044BFF6B863A94BB-min.jpg"/>
+      <FILE id="EIJnQc" name="76218989_p0.png" compile="0" resource="1" file="resources/76218989_p0.png"/>
+    </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
@@ -34,6 +39,7 @@
         <MODULEPATH id="juce_gui_basics" path="../../vstprogram/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="../../vstprogram/JUCE/modules"/>
         <MODULEPATH id="juce_dsp" path="../../vstprogram/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="../../vstprogram/JUCE/modules"/>
       </MODULEPATHS>
     </VS2019>
   </EXPORTFORMATS>
@@ -52,5 +58,6 @@
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
   </MODULES>
 </JUCERPROJECT>

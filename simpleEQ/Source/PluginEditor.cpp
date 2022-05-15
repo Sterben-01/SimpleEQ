@@ -18,16 +18,18 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     float rotaryStartAnegle,
     float rotaryEndAngle,
     juce::Slider& slider)
+
+
 {
     using namespace juce;
 
     auto bounds = Rectangle<float>(x, y, width, height);
 
-    g.setColour(Colour(97u, 18u, 167u)); //circle color
-    g.fillEllipse(bounds);
+    //g.setColour(Colour(97u, 18u, 167u)); //circle color
+    //g.fillEllipse(bounds);
 
     g.setColour(Colour(255u, 154u, 1u)); //circle edge color
-    g.drawEllipse(bounds, 1.f);
+    g.drawEllipse(bounds, 3.f);
 
     auto center = bounds.getCentre();
     Path p;
@@ -69,7 +71,7 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
     g.setColour(Colours::green);//test bound region
     g.drawRect(sliderBounds);//test bound region
 
-
+    
 
 
     getLookAndFeel().drawRotarySlider(g, 
@@ -95,7 +97,7 @@ juce::Rectangle<int>RotarySliderWithLables::getSliderBounds() const
     juce::Rectangle<int>r;
     r.setSize(size, size);
     r.setCentre(bounds.getCentreX(), 0);
-    r.setY(5);
+    r.setY(5); //distance between knobs and edge.1
 
 
     return r;
@@ -177,7 +179,8 @@ void ResopnceCurveComponent::timerCallback() {
 void ResopnceCurveComponent::paint(juce::Graphics& g)
 {
     using namespace juce;
-    g.fillAll(Colours::mediumslateblue);
+    //g.fillAll(Colours::green); what the fuck is this shit?
+    // 
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     //g.setColour (juce::Colours::white);
@@ -255,7 +258,7 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
     g.setColour(Colours::white);
     g.strokePath(responseCurve, PathStrokeType(2.f));
 
-
+    
 
 }
 
@@ -292,12 +295,21 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
         addAndMakeVisible(*comp);
     }
 
+    //auto testimg = juce::ImageCache::getFromMemory(BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpg, BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpgSize);
 
+    //if (!testimg.isNull())
+    //{
+    //    imageComponent.setImage(testimg, juce::RectanglePlacement::stretchToFit);
+    //}
+    //else 
+    //{
+    //    jassert(!testimg.isNull());
+    //}
+    
+    //juce::Component::addAndMakeVisible(imageComponent);
 
-    setSize (800, 600);
+    setSize (1000, 800);
 }
-
-
 
 
 
@@ -324,19 +336,24 @@ SimpleEQAudioProcessorEditor::~SimpleEQAudioProcessorEditor()
 void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
 {
     using namespace juce;
-    g.fillAll(Colours::mediumslateblue);
+    g.fillAll(Colours::mediumslateblue); //color for main bkg
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     //g.setColour (juce::Colours::white);
     //g.setFont (15.0f);
     //g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centredTop, 1);
-
-   
+    //imageComponent.setBoundsRelative(0.0f, 0.0f, 1.0f, 1.0f);
+    auto imagea = juce::ImageCache::getFromMemory(BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpg, BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpgSize);
+    g.drawImage(imagea, getLocalBounds().toFloat());
 }
 
 void SimpleEQAudioProcessorEditor::resized()
 {
     auto bounds = getLocalBounds();
+    //auto backgroundimagearea = bounds.removeFromTop(bounds.getHeight() * 0.15);
+
+    //backgroundImage.setBounds(backgroundimagearea);
+
     auto responseArea = bounds.removeFromTop(bounds.getHeight() * 0.33);
 
     responseCurveComponent.setBounds(responseArea);
@@ -359,3 +376,21 @@ void SimpleEQAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 }
+
+
+//BackgroundImage::BackgroundImage()
+//{
+//    backgroundImage = juce::ImageCache::getFromMemory(BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpg, BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpgSize);
+//    if (backgroundImage.isNull())
+//    {
+//        jassert(!backgroundImage.isNull());
+//    }
+//}
+//
+//void BackgroundImage::paint(juce::Graphics& g)
+//{
+//    using namespace juce;
+//    g.fillAll(Colours::green);
+//    g.drawText("Hello World!", getLocalBounds(), Justification::centred, true);
+//    g.drawImage(backgroundImage, getLocalBounds().toFloat());
+//}
