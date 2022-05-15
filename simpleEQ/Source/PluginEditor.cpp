@@ -64,6 +64,14 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
     auto sliderBounds = getSliderBounds();
 
+    g.setColour(Colours::red); //test bound region
+    g.drawRect(getLocalBounds());//test bound region
+    g.setColour(Colours::green);//test bound region
+    g.drawRect(sliderBounds);//test bound region
+
+
+
+
     getLookAndFeel().drawRotarySlider(g, 
                                         sliderBounds.getX(), 
                                         sliderBounds.getY(),
@@ -79,7 +87,18 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
 juce::Rectangle<int>RotarySliderWithLables::getSliderBounds() const
 {
-    return getLocalBounds();
+
+    auto bounds = getLocalBounds();
+    auto size = juce::jmin(bounds.getWidth(), bounds.getHeight());
+
+    size -= getTextHeight() * 2;
+    juce::Rectangle<int>r;
+    r.setSize(size, size);
+    r.setCentre(bounds.getCentreX(), 0);
+    r.setY(5);
+
+
+    return r;
 }
 
 
