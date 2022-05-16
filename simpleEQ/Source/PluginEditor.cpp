@@ -468,7 +468,7 @@ void ResopnceCurveComponent::resized()
         g.drawFittedText(str, r, juce::Justification::centred, 1);
     }
 
-    for (auto gDB : gain)
+    for (auto gDB : gain) //draw gain chart label.
     {
         auto y = jmap(gDB, -24.f, 24.f, float(bottom), float(top));
 
@@ -485,7 +485,21 @@ void ResopnceCurveComponent::resized()
         r.setX(getWidth() - textWidth);
         r.setCentre(r.getCentreX(), y);
         g.setColour(gDB == 0.f ? Colour(0u, 172u, 1u) : Colours::black);
-        g.drawFittedText(str, r, juce::Justification::centred, 1);
+        g.drawFittedText(str, r, juce::Justification::centred, 1); //draw gain (right side)
+
+
+
+
+        str.clear();
+        str << (gDB - 24.f);
+        r.setX(1);
+        textWidth = g.getCurrentFont().getStringWidth(str);
+        r.setSize(textWidth, chartlabelFontsize);
+        g.setColour(gDB == 24.f ? Colour(0u, 172u, 1u) : Colours::white);
+        g.drawFittedText(str, r, juce::Justification::centred, 1); //draw dBFS (left side)
+
+
+
     }
 
 }
