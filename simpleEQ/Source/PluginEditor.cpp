@@ -428,28 +428,35 @@ void ResopnceCurveComponent::resized()
     g.drawRect(getAnalysisArea());
 
     g.setColour(Colours::lightblue);
-    const int chartlabelFontsize = 13.f;
+    const int chartlabelFontsize = 18.f;
     g.setFont(chartlabelFontsize);
 
-    for (int i = 0; i < freqs.size(); i++) 
+    for (int i = 0; i < freqs.size(); i++)  //draw freq chart label.
     {
         auto f = freqs[i];
         auto x = renderAreaArray[i];
 
         bool addK = false;
         String str;
+
+        if (f > 2000.f) { //let 2k 5k 10k labels change to black color to be more clear.
+            g.setColour(Colours::black);
+        }
+
         if (f > 999.f) 
         {
             addK = true;
             f /= 1000.f;
 
         }
+
         str << f;
+
 
         if (addK) 
         {
             str << "k";
-
+            
         }
         str << "Hz";
 
@@ -458,13 +465,28 @@ void ResopnceCurveComponent::resized()
         r.setSize(textWidth, chartlabelFontsize);
         r.setCentre(x, 0);
         r.setY(1);
-
         g.drawFittedText(str, r, juce::Justification::centred, 1);
-
-
-
     }
 
+    for (auto gDB : gain)
+    {
+        auto y = jmap(gDB, -24.f, 24.f, float(bottom), float(top));
+
+        String str;
+
+        if (gDB > 0) 
+        {
+            str << "+";
+        }
+        str << gDB;
+        auto textWidth = g.getCurrentFont().getStringWidth(str);
+        Rectangle<int> r;
+        r.setSize(textWidth, chartlabelFontsize);
+        r.setX(getWidth() - textWidth);
+        r.setCentre(r.getCentreX(), y);
+        g.setColour(gDB == 0.f ? Colour(0u, 172u, 1u) : Colours::black);
+        g.drawFittedText(str, r, juce::Justification::centred, 1);
+    }
 
 }
 
@@ -475,10 +497,10 @@ juce::Rectangle<int> ResopnceCurveComponent::getRenderArea()
         JUCE_LIVE_CONSTANT(5));*/
     //bounds.reduce(25, 50);
 
-    bounds.removeFromTop(15);
+    bounds.removeFromTop(20); //this part control render area residule space. indicate to the space for chart label.
     bounds.removeFromBottom(2);
-    bounds.removeFromLeft(25);
-    bounds.removeFromRight(25);
+    bounds.removeFromLeft(35);
+    bounds.removeFromRight(35);
 
     return bounds;
 
