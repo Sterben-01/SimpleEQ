@@ -87,6 +87,8 @@ struct ResopnceCurveComponent : juce::Component, juce::AudioProcessorParameter::
 
     void timerCallback() override; //timer class callback decide whether param changed -> need to be repainted
     void paint(juce::Graphics& g) override;
+    void resized()  override;
+
 
 private:
     SimpleEQAudioProcessor& audioProcessor;
@@ -94,6 +96,14 @@ private:
     MonoChain monoChain;
 
     void updateChain();
+
+    juce::Image background;
+
+    juce::Rectangle<int> getRenderArea();
+
+    juce::Rectangle<int> getAnalysisArea();
+
+
 
 };
 
