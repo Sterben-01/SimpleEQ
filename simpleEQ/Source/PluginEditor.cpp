@@ -27,7 +27,6 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     //auto ccc = Colour(97u, 18u, 167u);
     g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f)); //circle color
     g.fillEllipse(bounds);
-
     g.setColour(Colour::fromFloatRGBA(1.f, 0.53f, 1.f, 0.7f)); //circle edge color
     g.drawEllipse(bounds, 3.f);
 
@@ -65,7 +64,6 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         //g.drawRect(r);
         g.setFont(samplefont);
         g.setFont(22.0f); //number font
-
         g.drawFittedText(text, r.toNearestInt(), juce::Justification::centred, 1);
 
     }
@@ -127,7 +125,7 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
     auto center = sliderBounds.toFloat().getCentre();
     auto radius = sliderBounds.getWidth() * 0.5f;
-    g.setColour(Colour(0u, 100u, 100u)); //knob label color
+    //g.setColour(Colour(0u, 100u, 100u)); //knob label color
     g.setFont(22.0f); //knob label size
     auto numChoices = labels.size();
 
@@ -143,10 +141,13 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
         Rectangle<float> r;
         auto str = labels[i].label;
-        r.setSize(g.getCurrentFont().getStringWidth(str), getTextHeight());
+        r.setSize(g.getCurrentFont().getStringWidth(str) +5, getTextHeight() +5); //area size
         r.setCentre(c);
-        r.setY(r.getY() + getTextHeight()+10);
-        //g.drawRect(r);
+        r.setY(r.getY() + getTextHeight()+10); //distance to knob
+        //g.drawRect(r); 
+        g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.5f)); //circle color
+        g.fillRoundedRectangle(r,4.f);
+        g.setColour(Colour(0u, 100u, 100u)); //knob label color
         g.drawFittedText(str, r.toNearestInt(), juce::Justification::centred, 1);
     }
 
