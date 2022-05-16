@@ -377,9 +377,9 @@ void ResopnceCurveComponent::resized()
 
     Array<float> freqs
     {
-        20,30,40,50,100,
-        200,300,400,500,1000,
-        2000,3000,4000,5000,10000,
+        20,/*30,40,*/50,100,
+        200,/*300,400,*/500,1000,
+        2000,/*3000,4000,*/5000,10000,
         20000
     };
 
@@ -410,10 +410,6 @@ void ResopnceCurveComponent::resized()
     }
 
 
-    
-
-
-
     Array<float> gain
     {
         -24, -12, 0, 12, 24
@@ -430,6 +426,46 @@ void ResopnceCurveComponent::resized()
     }
 
     g.drawRect(getAnalysisArea());
+
+    g.setColour(Colours::lightblue);
+    const int chartlabelFontsize = 13.f;
+    g.setFont(chartlabelFontsize);
+
+    for (int i = 0; i < freqs.size(); i++) 
+    {
+        auto f = freqs[i];
+        auto x = renderAreaArray[i];
+
+        bool addK = false;
+        String str;
+        if (f > 999.f) 
+        {
+            addK = true;
+            f /= 1000.f;
+
+        }
+        str << f;
+
+        if (addK) 
+        {
+            str << "k";
+
+        }
+        str << "Hz";
+
+        auto textWidth = g.getCurrentFont().getStringWidth(str);
+        Rectangle<int> r;
+        r.setSize(textWidth, chartlabelFontsize);
+        r.setCentre(x, 0);
+        r.setY(1);
+
+        g.drawFittedText(str, r, juce::Justification::centred, 1);
+
+
+
+    }
+
+
 }
 
 juce::Rectangle<int> ResopnceCurveComponent::getRenderArea()
