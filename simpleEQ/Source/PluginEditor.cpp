@@ -54,13 +54,17 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         auto text = rswl->getDisplayString();
         auto strWidth = g.getCurrentFont().getStringWidth(text);
 
-        r.setSize(strWidth + 4, rswl->getTextBoxHeight() + 2);
+        r.setSize(strWidth + 40, rswl->getTextBoxHeight() + 2);
 
         r.setCentre(bounds.getCentre());
 
-        g.setColour(Colours::black);
+        Font samplefont;
+        samplefont.setTypefaceName("Meiryo UI");
+
+        g.setColour(Colours::black); //number color
         //g.drawRect(r);
-        g.setFont(20.0f);
+        g.setFont(samplefont);
+        g.setFont(22.0f); //number font
 
         g.drawFittedText(text, r.toNearestInt(), juce::Justification::centred, 1);
 
@@ -124,7 +128,7 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
     auto center = sliderBounds.toFloat().getCentre();
     auto radius = sliderBounds.getWidth() * 0.5f;
     g.setColour(Colour(0u, 100u, 100u)); //knob label color
-    g.setFont(20.0f); //knob label size
+    g.setFont(22.0f); //knob label size
     auto numChoices = labels.size();
 
     for (int i = 0; i < numChoices; i++)
@@ -141,7 +145,8 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
         auto str = labels[i].label;
         r.setSize(g.getCurrentFont().getStringWidth(str), getTextHeight());
         r.setCentre(c);
-        r.setY(r.getY() + getTextHeight());
+        r.setY(r.getY() + getTextHeight()+10);
+        //g.drawRect(r);
         g.drawFittedText(str, r.toNearestInt(), juce::Justification::centred, 1);
     }
 
