@@ -16,6 +16,7 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     int height,
     float sliderPosProportional,
     float rotaryStartAnegle,
+
     float rotaryEndAngle,
     juce::Slider& slider)
 
@@ -237,7 +238,7 @@ ResopnceCurveComponent::ResopnceCurveComponent(SimpleEQAudioProcessor& p) : audi
     }
 
 
-    leftChannelFFTDataGenerator.changeOrder(FFTOrder::order4096);
+    leftChannelFFTDataGenerator.changeOrder(FFTOrder::order2048);
     monoBuffer.setSize(1, leftChannelFFTDataGenerator.getFFTSize());
 
 
@@ -383,7 +384,6 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
     //auto responseArea = getRenderArea();
     auto responseArea = getAnalysisArea();
     auto _width = responseArea.getWidth();
-
     auto& lowcut = monoChain.get<ChainPositions::LowCut>();
     auto& highcut = monoChain.get<ChainPositions::HighCut>();
     auto& peak = monoChain.get<ChainPositions::Peak>();
@@ -443,10 +443,17 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
         responseCurve.lineTo(responseArea.getX() + i, map(mags[i]));
 
     }
-
-    g.setColour(Colours::blue);
+    //leftChannelFFTPath.startNewSubPath(responseArea.getX(), map(mags.front()));
+    //leftChannelFFTPath.applyTransform(AffineTransform().translation(
+    //    JUCE_LIVE_CONSTANT(0),
+    //    JUCE_LIVE_CONSTANT(0)));
+    leftChannelFFTPath.applyTransform(AffineTransform().translation(responseArea.getX(), responseArea.getY()-11));
+    g.setColour(Colours::blue); //FFT analyzer color
     g.strokePath(leftChannelFFTPath, PathStrokeType(1.f));
 
+
+    g.setColour(Colours::skyblue);
+    g.drawRect(responseArea);
 
     g.setColour(Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);
@@ -616,6 +623,8 @@ juce::Rectangle<int> ResopnceCurveComponent::getAnalysisArea()
     auto bounds = getRenderArea();
     bounds.removeFromTop(5);
     bounds.removeFromBottom(5);
+    //bounds.removeFromLeft(5);
+    //bounds.removeFromRight(5);
     return bounds;
 
 }
@@ -713,7 +722,7 @@ SimpleEQAudioProcessorEditor::~SimpleEQAudioProcessorEditor()
 void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
 {
     using namespace juce;
-    g.fillAll(Colours::mediumslateblue); //color for main bkg
+    //g.fillAll(Colours::mediumslateblue); //color for main bkg
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     //g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     //g.setColour (juce::Colours::white);
