@@ -371,11 +371,15 @@ private:
 
     ResopnceCurveComponent responseCurveComponent;
 
-
+    juce::ToggleButton lowcutBypassButton, highcutBypassButton, peakBypassButton, analyzerEnabledButton;
 
     std::vector<juce::Component*> getComps();
 
     //juce::ImageComponent imageComponent;
+
+    using ButtonAttachment = APVTS::ButtonAttachment;
+
+    ButtonAttachment lowcutBypassButtonAttachment, highcutBypassButtonAttachment, peakBypassButtonAttachment, analyzerEnabledButtonAttachment;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleEQAudioProcessorEditor)
 };
