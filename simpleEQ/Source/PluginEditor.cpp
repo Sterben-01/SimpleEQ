@@ -6,6 +6,7 @@
   ==============================================================================
 */
 
+
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -120,8 +121,8 @@ void LookAndFeel::drawToggleButton(juce::Graphics& g, juce::ToggleButton& toggle
     auto size = jmin(bounds.getWidth(), bounds.getHeight()) - 6;
     auto r = bounds.withSizeKeepingCentre(size, size).toFloat();
 
-    float ang = 30.f;
-    size -= 6;
+    float ang = 40.f;
+    size -= 10;
     powerButton.addCentredArc(r.getCentreX(), 
                                 r.getCentreY(), 
                                 size * 0.5, 
@@ -559,6 +560,9 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
 
     g.setColour(Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);
+    g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f));
+    g.fillRoundedRectangle(getRenderArea().toFloat(), 4.f);
+
 
     g.setColour(Colours::white);
     g.strokePath(responseCurve, PathStrokeType(2.f));
