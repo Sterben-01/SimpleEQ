@@ -30,6 +30,8 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
     g.setColour(Colour::fromFloatRGBA(1.f, 0.53f, 1.f, 0.7f)); //circle edge color
     g.drawEllipse(bounds, 3.f);
 
+
+
     if (auto* rswl = dynamic_cast<RotarySliderWithLables*>(&slider)) 
     {
         auto center = bounds.getCentre();
@@ -39,7 +41,8 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         r.setRight(center.getX() + 2);
         r.setTop(bounds.getY());
         r.setBottom(center.getY() - rswl->getTextHeight()*1.5);
-
+        Path a;
+        a.addEllipse(bounds);
         p.addRoundedRectangle(r, 2.f);
         jassert(rotaryStartAnegle < rotaryEndAngle);
 
@@ -47,6 +50,7 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
 
         p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
 
+        //DropShadow(Colour(0xff9831d7), 68, { 0,0 }).drawForPath(g, p); //pointer shadow
         g.fillPath(p);
 
         g.setFont(rswl->getTextHeight());
@@ -61,11 +65,23 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         samplefont.setTypefaceName("Meiryo UI");
 
         g.setColour(Colours::black); //number color
-        //g.drawRect(r);
+        g.drawRect(r);
         g.setFont(samplefont);
         g.setFont(22.0f); //number font
         g.drawFittedText(text, r.toNearestInt(), juce::Justification::centred, 1);
-
+        //auto imagea = juce::ImageCache::getFromMemory(BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpg, BinaryData::_74FEACB9673C6E78044BFF6B863A94BBmin_jpgSize);
+        //if (imagea.isNull())
+        //{
+        //    jassert(!imagea.isNull());
+        //}
+        //else
+        //{
+        //    //ImageConvolutionKernel imageKernel(5);
+        //    //imageKernel.createGaussianBlur(20.f);
+        //    //Image blurbgimage;
+        //    //imageKernel.applyToImage(imagea, imagea, imagea.getBounds());
+        //    g.drawImage(imagea, a.getBounds);
+        //}
     }
 
 
@@ -105,10 +121,10 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
     auto sliderBounds = getSliderBounds();
 
-    //g.setColour(Colours::red); //test bound region
-    //g.drawRect(getLocalBounds());//test bound region
-    //g.setColour(Colours::green);//test bound region
-    //g.drawRect(sliderBounds);//test bound region
+    g.setColour(Colours::red); //test bound region
+    g.drawRect(getLocalBounds());//test bound region
+    g.setColour(Colours::green);//test bound region
+    g.drawRect(sliderBounds);//test bound region
 
     
 
@@ -213,14 +229,23 @@ juce::String RotarySliderWithLables::getDisplayString() const
 
 }
 
-ResopnceCurveComponent::ResopnceCurveComponent(SimpleEQAudioProcessor& p) : audioProcessor(p)
+ResopnceCurveComponent::ResopnceCurveComponent(SimpleEQAudioProcessor& p) : audioProcessor(p), leftChannelFifo(&audioProcessor.leftChannelFifo)
 {
     const auto& params = audioProcessor.getParameters();
     for (auto param : params) {
         param->addListener(this);
     }
+
+
+    leftChannelFFTDataGenerator.changeOrder(FFTOrder::order4096);
+    monoBuffer.setSize(1, leftChannelFFTDataGenerator.getFFTSize());
+
+
+
+
+
     updateChain();
-    startTimerHz(144); // timer callback initializer
+    startTimerHz(60); // timer callback initializer
 }
 
 
@@ -245,6 +270,65 @@ void ResopnceCurveComponent::parameterValueChanged(int parameterIndex, float new
 
 
 void ResopnceCurveComponent::timerCallback() {
+
+
+    juce::AudioBuffer<float> tempIncomingBuffer;
+
+    while (leftChannelFifo->getNumCompleteBuffersAvailable() > 0)
+    {
+        if (leftChannelFifo->getAudioBuffer(tempIncomingBuffer))
+        {
+            auto size = tempIncomingBuffer.getNumSamples();
+            juce::FloatVectorOperations::copy(monoBuffer.getWritePointer(0, 0),
+                                                monoBuffer.getReadPointer(0, size),
+                                                monoBuffer.getNumSamples() - size);
+
+
+            juce::FloatVectorOperations::copy(monoBuffer.getWritePointer(0, monoBuffer.getNumSamples() - size),
+                                                tempIncomingBuffer.getReadPointer(0, 0),
+                                                size);
+
+            leftChannelFFTDataGenerator.produceFFTDataForRendering(monoBuffer, -48.f);
+
+
+        }
+
+    }
+
+    auto fftBounds = getAnalysisArea().toFloat();
+    const auto fftSize = leftChannelFFTDataGenerator.getFFTSize();
+
+    const auto binWidth = audioProcessor.getSampleRate() / (double)fftSize;
+
+    while (leftChannelFFTDataGenerator.getNumAvailableFFTDataBlocks() > 0)
+    {
+        std::vector<float> fftData;
+        if (leftChannelFFTDataGenerator.getFFTData(fftData))
+        {
+            pathProducer.generatePath(fftData, fftBounds, fftSize, binWidth, -48.f);
+        }
+    }
+
+    /*
+    * while something can be pull
+    *   pull as manyu as we can
+    *       display most recent one
+    */
+
+    while (pathProducer.getNumPathsAvailable())
+    {
+        pathProducer.getPath(leftChannelFFTPath);
+    }
+
+
+
+
+
+
+
+
+
+
     if (parametersChanged.compareAndSetBool(false, true)) {
         //waiting for update monochain and signal a repaint
         //auto chainSettings = getChainSettings(audioProcessor.apvts);
@@ -259,8 +343,10 @@ void ResopnceCurveComponent::timerCallback() {
 
         //updateCutFilter(monoChain.get<ChainPositions::HighCut>(), highCutCoefficients, chainSettings.highCutSlope);
         updateChain();
-        repaint();
+        //repaint();
     }
+    repaint();
+
 }
 
 
@@ -357,6 +443,10 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
         responseCurve.lineTo(responseArea.getX() + i, map(mags[i]));
 
     }
+
+    g.setColour(Colours::blue);
+    g.strokePath(leftChannelFFTPath, PathStrokeType(1.f));
+
 
     g.setColour(Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);
@@ -637,6 +727,10 @@ void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
     }
     else 
     {
+        //ImageConvolutionKernel imageKernel(5);
+        //imageKernel.createGaussianBlur(20.f);
+        //Image blurbgimage;
+        //imageKernel.applyToImage(imagea, imagea, imagea.getBounds());
         g.drawImage(imagea, getLocalBounds().toFloat());
     }
 }
