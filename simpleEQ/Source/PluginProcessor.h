@@ -309,7 +309,7 @@ private:
     void updateHighCutFilters(const ChainSettings& chainSettings);
     void updateFilters();
 
-
+    juce::dsp::Oscillator<float> osc;
 
 
 
