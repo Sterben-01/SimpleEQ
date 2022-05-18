@@ -27,8 +27,15 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
 
     auto bounds = Rectangle<float>(x, y, width, height);
     //auto ccc = Colour(97u, 18u, 167u);
+
+    auto enabled = slider.isEnabled();
+
+    //g.setColour(enabled ? Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f) : Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.f));
+
     g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f)); //circle color
     g.fillEllipse(bounds);
+
+    //g.setColour(enabled ? Colour::fromFloatRGBA(1.f, 0.53f, 1.f, 0.7f) : Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.f));
     g.setColour(Colour::fromFloatRGBA(1.f, 0.53f, 1.f, 0.7f)); //circle edge color
     g.drawEllipse(bounds, 3.f);
 
@@ -52,7 +59,12 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
 
         p.applyTransform(AffineTransform().rotated(sliderAngRad, center.getX(), center.getY()));
 
-        //DropShadow(Colour(0xff9831d7), 68, { 0,0 }).drawForPath(g, p); //pointer shadow
+        if (enabled) {
+
+            DropShadow(Colour(0xff9831d7), 68, { 0,0 }).drawForPath(g, p); //pointer shadow
+        }
+
+      
         g.fillPath(p);
 
         g.setFont(rswl->getTextHeight());
@@ -65,8 +77,8 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
 
         Font samplefont;
         samplefont.setTypefaceName("Meiryo UI");
-
-        g.setColour(Colours::black); //number color
+        g.setColour(enabled ? Colours::black : Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.f));
+        //g.setColour(Colours::black); //number color
         g.drawRect(r);
         g.setFont(samplefont);
         g.setFont(22.0f); //number font
@@ -845,6 +857,39 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
 
     analyzerEnabledButton.setLookAndFeel(&LNF);
 
+    auto safePtr = juce::Component::SafePointer<SimpleEQAudioProcessorEditor>(this);
+    peakBypassButton.onClick = [safePtr]() { //here is lambda
+        if (auto* comp = safePtr.getComponent())
+        {
+            auto bypassed = comp->peakBypassButton.getToggleState();
+            comp->peakFreqSlider.setEnabled(!bypassed);
+            comp->peakGainSlider.setEnabled(!bypassed);
+            comp->peakQualitySlider.setEnabled(!bypassed);
+
+        }
+    };
+
+    lowcutBypassButton.onClick = [safePtr]() { //here is lambda
+        if (auto* comp = safePtr.getComponent())
+        {
+            auto bypassed = comp->lowcutBypassButton.getToggleState();
+            comp->lowCutFreqSlider.setEnabled(!bypassed);
+            comp->lowCutSlopeSlider.setEnabled(!bypassed);
+
+        }
+    };
+
+    highcutBypassButton.onClick = [safePtr]() { //here is lambda
+        if (auto* comp = safePtr.getComponent())
+        {
+            auto bypassed = comp->highcutBypassButton.getToggleState();
+            comp->highCutFreqSlider.setEnabled(!bypassed);
+            comp->highCutSlopeSlider.setEnabled(!bypassed);
+
+        }
+    };
+
+
     setSize (1000, 800);
 
 
@@ -861,8 +906,18 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
 std::vector<juce::Component*> SimpleEQAudioProcessorEditor::getComps()
 {
 
-    return{ &peakFreqSlider, &peakGainSlider, &peakQualitySlider, &lowCutFreqSlider, &highCutFreqSlider, &lowCutSlopeSlider, &highCutSlopeSlider, &responseCurveComponent,
-    &lowcutBypassButton, &highcutBypassButton, &peakBypassButton, &analyzerEnabledButton};
+    return{ &peakFreqSlider, 
+            &peakGainSlider, 
+            &peakQualitySlider, 
+            &lowCutFreqSlider, 
+            &highCutFreqSlider, 
+            &lowCutSlopeSlider, 
+            &highCutSlopeSlider, 
+            &responseCurveComponent,
+            &lowcutBypassButton, 
+            &highcutBypassButton, 
+            &peakBypassButton, 
+            &analyzerEnabledButton};
 
     //return std::vector<juce::Component*>{ &peakFreqSlider, &peakGainSlider, &peakQualitySlider, &lowCutFreqSlider, &highCutFreqSlider };
 
