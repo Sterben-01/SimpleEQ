@@ -263,7 +263,7 @@ ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts)
     settings.lowCutBypassed = apvts.getRawParameterValue("LowCut Bypassed")->load() > 0.5f;
     settings.peakBypassed = apvts.getRawParameterValue("Peak Bypassed")->load() > 0.5f;
     settings.highCutBypassed = apvts.getRawParameterValue("HighCut Bypassed")->load() > 0.5f;
-
+    settings.AnalyzerEnabled = apvts.getRawParameterValue("Analyzer Enabled")->load() > 0.5f;
 
 
 
@@ -322,6 +322,14 @@ void SimpleEQAudioProcessor::updateLowCutFilters(const ChainSettings& chainSetti
 
 }
 
+void SimpleEQAudioProcessor::updateAnalyzer(const ChainSettings& chainSettings)
+{
+
+}
+
+
+
+
 void SimpleEQAudioProcessor::updateHighCutFilters(const ChainSettings& chainSettings) 
 {
     auto highcutCoefficients = makeHighCutFilter(chainSettings, getSampleRate());
@@ -345,6 +353,7 @@ void SimpleEQAudioProcessor::updateFilters()
     updateLowCutFilters(chainSettings);
     updateHighCutFilters(chainSettings);
     updatePeakFilter(chainSettings);
+
 
 
 }

@@ -161,7 +161,7 @@ struct ChainSettings { //default values
     Slope lowCutSlope{ Slope::Slope_12 }, highCutSlope{ Slope::Slope_12 };
 
     bool lowCutBypassed{ false }, peakBypassed{ false }, highCutBypassed{ false };
-
+    bool AnalyzerEnabled{ false };
 };
 
 ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts);
@@ -309,6 +309,7 @@ private:
 
     void updateLowCutFilters(const ChainSettings& chainSettings);
     void updateHighCutFilters(const ChainSettings& chainSettings);
+    void updateAnalyzer(const ChainSettings& chainSettings);
     void updateFilters();
 
     juce::dsp::Oscillator<float> osc;
