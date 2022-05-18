@@ -290,8 +290,10 @@ struct ResopnceCurveComponent : juce::Component, juce::AudioProcessorParameter::
     void timerCallback() override; //timer class callback decide whether param changed -> need to be repainted
     void paint(juce::Graphics& g) override;
     void resized()  override;
-
-
+    void toggleAnalysisEnablement(bool enabled)
+    {
+        shouldShowFFTAnalysis = enabled;
+    }
 private:
     SimpleEQAudioProcessor& audioProcessor;
     juce::Atomic<bool> parametersChanged{ false };
@@ -317,6 +319,7 @@ private:
 
     PathProducer leftPathProducer, rightPathProducer;
 
+    bool shouldShowFFTAnalysis = true;
 };
 
 

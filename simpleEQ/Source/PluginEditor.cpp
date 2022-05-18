@@ -79,7 +79,7 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
         samplefont.setTypefaceName("Meiryo UI");
         g.setColour(enabled ? Colours::black : Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.f));
         //g.setColour(Colours::black); //number color
-        g.drawRect(r);
+        //g.drawRect(r);
         g.setFont(samplefont);
         g.setFont(22.0f); //number font
         g.drawFittedText(text, r.toNearestInt(), juce::Justification::centred, 1);
@@ -200,10 +200,10 @@ void RotarySliderWithLables::paint(juce::Graphics& g)
 
     auto sliderBounds = getSliderBounds();
 
-    g.setColour(Colours::red); //test bound region
-    g.drawRect(getLocalBounds());//test bound region
-    g.setColour(Colours::green);//test bound region
-    g.drawRect(sliderBounds);//test bound region
+    //g.setColour(Colours::red); //test bound region
+    //g.drawRect(getLocalBounds());//test bound region
+    //g.setColour(Colours::green);//test bound region
+    //g.drawRect(sliderBounds);//test bound region
 
     
 
@@ -451,13 +451,16 @@ void ResopnceCurveComponent::timerCallback() {
 
 
 
-    auto fftBounds = getAnalysisArea().toFloat();
-    auto sampleRate = audioProcessor.getSampleRate();
-    leftPathProducer.process(fftBounds, sampleRate);
-    rightPathProducer.process(fftBounds, sampleRate);
 
 
 
+    if (shouldShowFFTAnalysis)
+    {
+        auto fftBounds = getAnalysisArea().toFloat();
+        auto sampleRate = audioProcessor.getSampleRate();
+        leftPathProducer.process(fftBounds, sampleRate);
+        rightPathProducer.process(fftBounds, sampleRate);
+    }
 
 
 
@@ -587,22 +590,30 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
         responseCurve.lineTo(responseArea.getX() + i, map(mags[i]));
 
     }
-    //leftChannelFFTPath.startNewSubPath(responseArea.getX(), map(mags.front()));
-    //leftChannelFFTPath.applyTransform(AffineTransform().translation(
-    //    JUCE_LIVE_CONSTANT(0),
-    //    JUCE_LIVE_CONSTANT(0)));
-    auto leftChannelFFTPath = leftPathProducer.getPath();
-    leftChannelFFTPath.applyTransform(AffineTransform().translation(responseArea.getX(), responseArea.getY()-10));
-    g.setColour(Colours::blue); //FFT analyzer color
-    g.strokePath(leftChannelFFTPath, PathStrokeType(1.f));
 
-    auto rightChannelFFTPath = rightPathProducer.getPath();
-    rightChannelFFTPath.applyTransform(AffineTransform().translation(responseArea.getX(), responseArea.getY() - 10));
-    g.setColour(Colours::yellow); //FFT analyzer color
-    g.strokePath(rightChannelFFTPath, PathStrokeType(1.f));
+    if (shouldShowFFTAnalysis)
+    {
 
-    //g.setColour(Colours::skyblue);
-    //g.drawRect(responseArea);
+        //leftChannelFFTPath.startNewSubPath(responseArea.getX(), map(mags.front()));
+        //leftChannelFFTPath.applyTransform(AffineTransform().translation(
+        //    JUCE_LIVE_CONSTANT(0),
+        //    JUCE_LIVE_CONSTANT(0)));
+        auto leftChannelFFTPath = leftPathProducer.getPath();
+        leftChannelFFTPath.applyTransform(AffineTransform().translation(responseArea.getX(), responseArea.getY() - 10));
+        g.setColour(Colours::blue); //FFT analyzer color
+        g.strokePath(leftChannelFFTPath, PathStrokeType(1.f));
+
+        auto rightChannelFFTPath = rightPathProducer.getPath();
+        rightChannelFFTPath.applyTransform(AffineTransform().translation(responseArea.getX(), responseArea.getY() - 10));
+        g.setColour(Colours::yellow); //FFT analyzer color
+        g.strokePath(rightChannelFFTPath, PathStrokeType(1.f));
+
+        //g.setColour(Colours::skyblue);
+        //g.drawRect(responseArea);
+    }
+
+
+
 
     g.setColour(Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);
@@ -885,6 +896,15 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
             auto bypassed = comp->highcutBypassButton.getToggleState();
             comp->highCutFreqSlider.setEnabled(!bypassed);
             comp->highCutSlopeSlider.setEnabled(!bypassed);
+
+        }
+    };
+
+    analyzerEnabledButton.onClick = [safePtr]() { //here is lambda
+        if (auto* comp = safePtr.getComponent())
+        {
+            auto enabled = comp->analyzerEnabledButton.getToggleState();
+            comp->responseCurveComponent.toggleAnalysisEnablement(enabled);
 
         }
     };
