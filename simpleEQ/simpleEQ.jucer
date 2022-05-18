@@ -3,7 +3,8 @@
 <JUCERPROJECT id="Imongg" name="AnimeEQ" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="17"
               companyName="Towiko Audio" companyEmail="sterben_01@mkacg.com"
-              companyWebsite="https://sterben-01.github.io/" companyCopyright="Towiko Audio Co.,Ltd">
+              companyWebsite="https://sterben-01.github.io/" companyCopyright="Towiko Audio Co.,Ltd"
+              pluginVST3Category="EQ" pluginAAXCategory="1" pluginRTASCategory="1">
   <MAINGROUP id="KlCZTw" name="AnimeEQ">
     <GROUP id="{B5E04313-7D16-EA2A-FCEF-B40139CAE04F}" name="Source">
       <FILE id="XKMqrF" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -25,7 +26,7 @@
     <VS2019 targetFolder="Builds/VisualStudio2019">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="simpleEQ"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="simpleEQ"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="AnimeEQ"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../../vstprogram/JUCE/modules"/>
