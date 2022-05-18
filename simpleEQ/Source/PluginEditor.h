@@ -328,7 +328,8 @@ private:
 
 
 
-
+struct PowerButton : juce::ToggleButton {};
+struct AnalyzerButton :juce::ToggleButton {};
 
 
 
@@ -372,7 +373,8 @@ private:
 
     ResopnceCurveComponent responseCurveComponent;
 
-    juce::ToggleButton lowcutBypassButton, highcutBypassButton, peakBypassButton, analyzerEnabledButton;
+    PowerButton lowcutBypassButton, highcutBypassButton, peakBypassButton;
+    AnalyzerButton analyzerEnabledButton;
 
     std::vector<juce::Component*> getComps();
 

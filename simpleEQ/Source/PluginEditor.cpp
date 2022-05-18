@@ -115,32 +115,66 @@ void LookAndFeel::drawRotarySlider(juce::Graphics& g,
 void LookAndFeel::drawToggleButton(juce::Graphics& g, juce::ToggleButton& toggleButton, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown)
 {
     using namespace juce;
-    Path powerButton;
 
-    auto bounds = toggleButton.getLocalBounds();
-    auto size = jmin(bounds.getWidth(), bounds.getHeight()) - 6;
-    auto r = bounds.withSizeKeepingCentre(size, size).toFloat();
+    if (auto* pb = dynamic_cast<PowerButton*>(&toggleButton))
+    {
+        Path powerButton;
 
-    float ang = 40.f;
-    size -= 10;
-    powerButton.addCentredArc(r.getCentreX(), 
-                                r.getCentreY(), 
-                                size * 0.5, 
-                                size * 0.5, 
-                                0.f, 
-                                degreesToRadians(ang), 
-                                degreesToRadians(360.f - ang),
-                                true);
-    powerButton.startNewSubPath(r.getCentreX(), r.getY());
-    powerButton.lineTo(r.getCentre());
+        auto bounds = toggleButton.getLocalBounds();
+        auto size = jmin(bounds.getWidth(), bounds.getHeight()) - 6;
+        auto r = bounds.withSizeKeepingCentre(size, size).toFloat();
 
-    PathStrokeType pst(2.f, PathStrokeType::JointStyle::curved);
+        float ang = 40.f;
+        size -= 10;
+        powerButton.addCentredArc(r.getCentreX(),
+            r.getCentreY(),
+            size * 0.5,
+            size * 0.5,
+            0.f,
+            degreesToRadians(ang),
+            degreesToRadians(360.f - ang),
+            true);
+        powerButton.startNewSubPath(r.getCentreX(), r.getY());
+        powerButton.lineTo(r.getCentre());
 
-    auto color = toggleButton.getToggleState() ? Colours::dimgrey : Colour(0u, 172u, 1u);
-    g.setColour(color);
+        PathStrokeType pst(2.f, PathStrokeType::JointStyle::curved);
 
-    g.strokePath(powerButton, pst);
-    g.drawEllipse(r, 2.f);
+        auto color = toggleButton.getToggleState() ? Colours::dimgrey : Colour(0u, 172u, 1u);
+        g.setColour(color);
+
+        g.strokePath(powerButton, pst);
+        g.drawEllipse(r, 2.f);
+
+    }
+
+    else if (auto* analyzerButton = dynamic_cast<AnalyzerButton*>(&toggleButton))
+    {
+        auto color = toggleButton.getToggleState() ? Colour(0u, 172u, 1u) : Colours::dimgrey;
+        g.setColour(color);
+
+        auto bounds = toggleButton.getLocalBounds();
+        g.drawRect(bounds);
+        auto insetRect = bounds.reduced(4);
+
+        Path randomPath;
+
+        Random r;
+
+        randomPath.startNewSubPath(insetRect.getX(), 
+                                    insetRect.getY() + insetRect.getHeight() * r.nextFloat());
+
+        for (auto x = insetRect.getX() + 1; x < insetRect.getRight(); x += 2) 
+        {
+            randomPath.lineTo(x, insetRect.getY() + insetRect.getHeight() * r.nextFloat());
+        }
+
+        g.strokePath(randomPath, PathStrokeType(1.f));
+
+
+    }
+
+
+    
 }
 
 void RotarySliderWithLables::paint(juce::Graphics& g)
@@ -560,7 +594,7 @@ void ResopnceCurveComponent::paint(juce::Graphics& g)
 
     g.setColour(Colours::orange);
     g.drawRoundedRectangle(getRenderArea().toFloat(), 4.f, 1.f);
-    g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f));
+    g.setColour(Colour::fromFloatRGBA(1.f, 1.f, 1.f, 0.3f)); //response curve area color
     g.fillRoundedRectangle(getRenderArea().toFloat(), 4.f);
 
 
@@ -809,6 +843,8 @@ SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcess
     lowcutBypassButton.setLookAndFeel(&LNF);
     highcutBypassButton.setLookAndFeel(&LNF);
 
+    analyzerEnabledButton.setLookAndFeel(&LNF);
+
     setSize (1000, 800);
 
 
@@ -837,7 +873,7 @@ SimpleEQAudioProcessorEditor::~SimpleEQAudioProcessorEditor()
     peakBypassButton.setLookAndFeel(nullptr);
     lowcutBypassButton.setLookAndFeel(nullptr);
     highcutBypassButton.setLookAndFeel(nullptr);
-
+    analyzerEnabledButton.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -872,6 +908,15 @@ void SimpleEQAudioProcessorEditor::resized()
     //auto backgroundimagearea = bounds.removeFromTop(bounds.getHeight() * 0.15);
 
     //backgroundImage.setBounds(backgroundimagearea);
+
+    auto analyzerEnabledArea = bounds.removeFromTop(25);
+    analyzerEnabledArea.setWidth(100);
+    analyzerEnabledArea.setX(5);
+    analyzerEnabledArea.removeFromTop(2);
+
+    analyzerEnabledButton.setBounds(analyzerEnabledArea);
+    bounds.removeFromTop(5);
+
 
     auto responseArea = bounds.removeFromTop(bounds.getHeight() * 0.33);
 
